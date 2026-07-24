@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -14,3 +15,4 @@ Route::get('/posts/{id}', [PostController::class, 'show']);
 
 Route::post('posts', [PostController::class, 'store'])
     ->middleware('auth:sanctum');
+Route::post('/register', [AuthController::class, 'register']);
