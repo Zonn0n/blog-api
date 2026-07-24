@@ -13,6 +13,7 @@ Route::get('/posts', [PostController::class, 'index']);
 
 Route::get('/posts/{id}', [PostController::class, 'show']);
 
-Route::post('posts', [PostController::class, 'store'])
+Route::post('/posts', [PostController::class, 'store'])
     ->middleware('auth:sanctum');
+
 Route::post('/register', [AuthController::class, 'register']);
