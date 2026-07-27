@@ -48,6 +48,11 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'title' => ['required', 'string'],
+            'text' => ['required', 'string'],
+        ]);
+
         $post = $request->user()->posts()->create([
             'title' => $request->input('title'),
             'text' => $request->input('text'),
