@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Enums\SortingType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
+use App\Http\Resources\PostResource;
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -19,11 +19,13 @@ class PostController extends Controller
             $request->query('sort', SortingType::default()->value)
         ) ?? SortingType::default();
 
-        return Post::query()
-            ->orderBy($sort->value)
-            ->offset($offset)
-            ->limit($limit)
-            ->get();
+        return PostResource::collection(
+            Post::query()
+                ->orderBy($sort->value)
+                ->offset($offset)
+                ->limit($limit)
+                ->get()
+        );
     }
 
     public function myPosts(Request $request) 
@@ -34,17 +36,21 @@ class PostController extends Controller
             $request->query('sort', SortingType::default()->value)
         ) ?? SortingType::default();
 
-        return $request->user()
-            ->posts()
-            ->orderBy($sort->value)
-            ->offset($offset)
-            ->limit($limit)
-            ->get();
+        return PostResource::collection(
+            $request->user()
+                ->posts()
+                ->orderBy($sort->value)
+                ->offset($offset)
+                ->limit($limit)
+                ->get()
+        );
     }
 
     public function show(int $id) 
     {
-        return Post::findOrFail($id);
+        return new PostResource(
+            Post::findOrFail($id)
+        );
     }
 
     public function store(StorePostRequest $request)
@@ -53,6 +59,8 @@ class PostController extends Controller
             $request->validated()
         );
 
-        return $post;
+        return new PostResource(
+            $post
+        );
     }
 }
