@@ -3,25 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Hash;
-use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    public function register(Request $request) 
-    {
-        $request->validate([
-            'name' => ['required', 'string'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string'],
-        ]);
-    
-        $user = User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => $request->input('password'),
-        ]);
+    public function register(RegisterRequest $request) 
+    {    
+        $user = User::create($request->validated());
         $token = $user->createToken('mobile')->plainTextToken;
 
         return [
@@ -29,21 +20,17 @@ class AuthController extends Controller
         ];
     }
 
-    public function login(Request $request) 
+    public function login(LoginRequest $request) 
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'],
-        ]);
-
-        $user = User::where('email', $request->input('email'))->first();
+        $data = $request->validated();
+        $user = User::where('email', $data['email'])->first();
         if ($user === null) {
             return response()->json([
                 'message' => 'Invalid credentials'
             ], 401);
         }
 
-        if (!Hash::check($request->input('password'), $user->password)) {
+        if (!Hash::check($data['password'], $user->password)) {
             return response()->json([
                 'message' => 'Invalid credentials'
             ], 401);
