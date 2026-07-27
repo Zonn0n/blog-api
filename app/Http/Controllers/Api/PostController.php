@@ -19,8 +19,24 @@ class PostController extends Controller
             $request->query('sort', SortingType::default()->value)
         ) ?? SortingType::default();
 
+        $query = Post::query();
+        if ($request->filled('date_from')) {
+            $query->whereDate(
+                'created_at',
+                '>=',
+                $request->date('date_from'),
+            );
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate(
+                'created_at',
+                '<=',
+                $request->date('date_to'),
+            );
+        }
+
         return PostResource::collection(
-            Post::query()
+            $query
                 ->orderBy($sort->value)
                 ->offset($offset)
                 ->limit($limit)
@@ -36,9 +52,26 @@ class PostController extends Controller
             $request->query('sort', SortingType::default()->value)
         ) ?? SortingType::default();
 
+        $query = $request
+            ->user()
+            ->posts();
+        if ($request->filled('date_from')) {
+            $query->whereDate(
+                'created_at',
+                '>=',
+                $request->date('date_from'),
+            );
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate(
+                'created_at',
+                '<=',
+                $request->date('date_to'),
+            );
+        }
+
         return PostResource::collection(
-            $request->user()
-                ->posts()
+            $query
                 ->orderBy($sort->value)
                 ->offset($offset)
                 ->limit($limit)
