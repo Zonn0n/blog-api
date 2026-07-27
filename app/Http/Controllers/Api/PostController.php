@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Enums\SortingType;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -18,6 +19,22 @@ class PostController extends Controller
         ) ?? SortingType::default();
 
         return Post::query()
+            ->orderBy($sort->value)
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
+    }
+
+    public function myPosts(Request $request) 
+    {
+        $limit = $request->integer('limit', 20);
+        $offset = $request->integer('offset', 0);
+        $sort = SortingType::tryFrom(
+            $request->query('sort', SortingType::default()->value)
+        ) ?? SortingType::default();
+
+        return $request->user()
+            ->posts()
             ->orderBy($sort->value)
             ->offset($offset)
             ->limit($limit)
