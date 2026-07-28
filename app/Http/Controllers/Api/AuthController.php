@@ -11,20 +11,16 @@ use Hash;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        private readonly AuthService $authService,
+    ) {}
+
     public function register(RegisterRequest $request) 
     {    
-        $user = User::create($request->validated());
-        $token = $user->createToken('mobile')->plainTextToken;
-
-        return [
-            'access_token' => $token,
-        ];
+        return $this->authService->register($request->validated());
     }
 
-    public function login(
-        LoginRequest $request, 
-        AuthService $authService
-    ) {
-        return $authService->login($request->validated());
+    public function login(LoginRequest $request) {
+        return $this->authService->login($request->validated());
     }
 }

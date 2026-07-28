@@ -8,6 +8,15 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthService 
 {
+    public function register(array $data): array 
+    {
+        $user  = User::create($data);
+        
+        return [
+            'access_token' => $$user->createToken('mobile')->plainTextToken,
+        ];
+    } 
+
     /**
      * @throws InvalidCredentialsException
      */
