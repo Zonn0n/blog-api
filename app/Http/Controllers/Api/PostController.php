@@ -11,7 +11,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use OpenApi\Attributes as OA;
 
+#[OA\Info(
+    title: "Blog API",
+    version: '1.0.0',
+)]
 class PostController extends Controller
 {
     private const DEFAULT_LIMIT = 20;
@@ -19,6 +24,21 @@ class PostController extends Controller
 
     private const DEFAULT_OFFSET = 0;
 
+    #[OA\Get(
+        path: "/api/posts",
+        summary: "Список постов",
+        tags: ["Posts"],
+        responses: [
+            new OA\Response(
+                response: 200, 
+                description: "Ответ",
+                content: new OA\JsonContent(
+                    type: "array", 
+                    items: new OA\Items(ref: "#/components/schemas/PostResource")
+                ),
+            ),
+        ]
+    )]
     public function index(Request $request) 
     {
         return $this->getPostsCollection(
@@ -27,6 +47,21 @@ class PostController extends Controller
         );
     }
 
+    #[OA\Get(
+        path: "/api/my-posts",
+        summary: "Список постов",
+        tags: ["Posts"],
+        responses: [
+            new OA\Response(
+                response: 200, 
+                description: "Ответ",
+                content: new OA\JsonContent(
+                    type: "array", 
+                    items: new OA\Items(ref: "#/components/schemas/PostResource")
+                ),
+            ),
+        ]
+    )]
     public function myPosts(Request $request) 
     {
         return $this->getPostsCollection(
@@ -35,11 +70,77 @@ class PostController extends Controller
         );
     }
 
+    #[OA\Get(
+        path: "/api/posts/{id}",
+        summary: "Детали поста",
+        tags: ["Posts"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                required: true,
+                schema: new OA\Schema(type: "integer"),
+                description: "ID поста",
+                in: "path",
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200, 
+                description: "Ответ",
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/PostResource",
+                )
+            ),
+        ],
+    )]
     public function show(int $id) 
     {
         return new PostResource(Post::findOrFail($id));
     }
 
+    #[OA\Post(
+        path: "/api/posts",
+        summary: "Создание поста",
+        tags: ["Posts"],
+        security: [
+            ['sanctum' => []],
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['title', 'text'],
+                properties: [
+                    new OA\Property(
+                        property: 'title',
+                        type: 'string',
+                        example: 'Мой новый пост',
+                    ),
+                    new OA\Property(
+                        property: 'text',
+                        type: 'string',
+                        example: 'Текст моего нового поста',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Пост создан',
+                content: new OA\JsonContent(
+                    ref: '#/components/schemas/PostResource',
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Не авторизован',
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Ошибка валидации',
+            ),
+        ],
+    )]
     public function store(StorePostRequest $request)
     {
         $post = $request->user()->posts()->create(
