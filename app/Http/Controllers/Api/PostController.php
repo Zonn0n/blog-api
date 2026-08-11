@@ -13,10 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use OpenApi\Attributes as OA;
 
-#[OA\Info(
-    title: "Blog API",
-    version: '1.0.0',
-)]
 class PostController extends Controller
 {
     private const DEFAULT_LIMIT = 20;
@@ -25,7 +21,7 @@ class PostController extends Controller
     private const DEFAULT_OFFSET = 0;
 
     #[OA\Get(
-        path: "/api/posts",
+        path: "/posts",
         summary: "Список постов",
         tags: ["Posts"],
         responses: [
@@ -48,7 +44,7 @@ class PostController extends Controller
     }
 
     #[OA\Get(
-        path: "/api/my-posts",
+        path: "/my-posts",
         summary: "Список постов",
         tags: ["Posts"],
         responses: [
@@ -71,7 +67,7 @@ class PostController extends Controller
     }
 
     #[OA\Get(
-        path: "/api/posts/{id}",
+        path: "/posts/{id}",
         summary: "Детали поста",
         tags: ["Posts"],
         parameters: [
@@ -99,7 +95,7 @@ class PostController extends Controller
     }
 
     #[OA\Post(
-        path: "/api/posts",
+        path: "/posts",
         summary: "Создание поста",
         tags: ["Posts"],
         security: [

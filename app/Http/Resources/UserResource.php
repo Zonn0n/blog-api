@@ -8,31 +8,26 @@ use OpenApi\Attributes as OA;
 
 #[OA\Schema(
     type: "object",
-    schema: "PostResource",
+    schema: "UserResource",
     properties: [
         new OA\Property(
             property: "id",
             type: "integer",
-            description: "ID поста",
+            description: "ID пользователя",
         ),
         new OA\Property(
-            property: "title",
+            property: "name",
             type: "string",
-            description: "Название поста",
+            description: "Имя пользователя",
         ),
         new OA\Property(
-            property: "text",
+            property: "email",
             type: "string",
-            description: "Текст поста",
-        ),
-        new OA\Property(
-            property: "created_at",
-            type: "string",
-            description: "Дата создания",
+            description: "Email пользователя",
         ),
     ],
 )]
-class PostResource extends JsonResource
+class UserResource extends JsonResource 
 {
     /**
      * Transform the resource into an array.
@@ -43,9 +38,9 @@ class PostResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
-            'text' => $this->text,
-            'created_at' => $this->created_at,
+            'name' => $this->name,
+            'email' => $this->email,
+            'is_admin' => $this->is_admin,
         ];
     }
 }

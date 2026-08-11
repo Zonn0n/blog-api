@@ -4,6 +4,11 @@
         "title": "Blog API",
         "version": "1.0.0"
     },
+    "servers": [
+        {
+            "url": "/api"
+        }
+    ],
     "paths": {
         "/register": {
             "post": {
@@ -116,13 +121,13 @@
                 }
             }
         },
-        "/api/posts": {
+        "/posts": {
             "get": {
                 "tags": [
                     "Posts"
                 ],
                 "summary": "Список постов",
-                "operationId": "3fda362e2e082b5357ac416e7767e435",
+                "operationId": "cce7863441436fd49dc474491f658292",
                 "responses": {
                     "200": {
                         "description": "Ответ",
@@ -144,7 +149,7 @@
                     "Posts"
                 ],
                 "summary": "Создание поста",
-                "operationId": "dcb66200c3132996151884ac232cf439",
+                "operationId": "21a6ac5f9280a3cf958c3d066b5600ee",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -194,13 +199,13 @@
                 ]
             }
         },
-        "/api/my-posts": {
+        "/my-posts": {
             "get": {
                 "tags": [
                     "Posts"
                 ],
                 "summary": "Список постов",
-                "operationId": "b1b8c2c6c33c80f172a3c5694b386acd",
+                "operationId": "3a620c33a82122ca5e6d66760d247645",
                 "responses": {
                     "200": {
                         "description": "Ответ",
@@ -218,13 +223,13 @@
                 }
             }
         },
-        "/api/posts/{id}": {
+        "/posts/{id}": {
             "get": {
                 "tags": [
                     "Posts"
                 ],
                 "summary": "Детали поста",
-                "operationId": "142b5adb0520cca80cedfe09d9298332",
+                "operationId": "6b9af649206ee145dfc5584522c37327",
                 "parameters": [
                     {
                         "name": "id",
@@ -249,16 +254,35 @@
                     }
                 }
             }
+        },
+        "/user/{id}": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Данные пользователя",
+                "operationId": "4cb26f403ff6b16406b58e88460726c7",
+                "responses": {
+                    "200": {
+                        "description": "Ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Пользователь не авторизован"
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
             "PostResource": {
-                "required": [
-                    "id",
-                    "title",
-                    "text"
-                ],
                 "properties": {
                     "id": {
                         "description": "ID поста",
@@ -278,6 +302,31 @@
                     }
                 },
                 "type": "object"
+            },
+            "UserResource": {
+                "properties": {
+                    "id": {
+                        "description": "ID пользователя",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Имя пользователя",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Email пользователя",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "scheme": "bearer",
+                "name": "Authorization",
+                "in": "header"
             }
         }
     },
@@ -293,6 +342,10 @@
         {
             "name": "Posts",
             "description": "Posts"
+        },
+        {
+            "name": "User",
+            "description": "User"
         }
     ]
 }

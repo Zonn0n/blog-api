@@ -32,7 +32,7 @@ class AuthService
         }
         
         return [
-            'access_token' => $$user->createToken('mobile')->plainTextToken,
+            'access_token' => $user->createToken('mobile')->plainTextToken,
         ];
     }
 }
