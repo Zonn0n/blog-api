@@ -47,6 +47,9 @@ class PostController extends Controller
         path: "/my-posts",
         summary: "Список постов",
         tags: ["Posts"],
+        security: [
+            ['sanctum' => []]
+        ],
         responses: [
             new OA\Response(
                 response: 200, 

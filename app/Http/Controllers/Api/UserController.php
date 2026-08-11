@@ -13,6 +13,9 @@ class UserController extends Controller
         path: '/user/{id}',
         summary: "Данные пользователя",
         tags: ["User"],
+        security: [
+            ['sanctum' => []]
+        ],
         responses: [
             new OA\Response(
                 response: 200, 

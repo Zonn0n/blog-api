@@ -9,6 +9,11 @@ use OpenApi\Attributes as OA;
     version: '1.0.0',
 )]
 #[OA\Server(url: '/api')]
+#[OA\SecurityScheme(
+    type: 'http',
+    scheme: 'bearer',
+    securityScheme: 'sanctum',
+)]
 abstract class Controller
 {
     //
