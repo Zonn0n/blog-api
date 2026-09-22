@@ -2,10 +2,14 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Dto\User\UserDto;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes as OA;
 
+/**
+ * @property UserDto $resource
+ */
 #[OA\Schema(
     type: "object",
     schema: "UserResource",
@@ -37,10 +41,9 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'is_admin' => $this->is_admin,
+            'id' => $this->resource->id,
+            'name' => $this->resource->name,
+            'email' => $this->resource->email,
         ];
     }
 }

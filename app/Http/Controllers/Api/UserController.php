@@ -4,13 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
-use Illuminate\Http\Client\Request;
+use App\Services\UserService;
+use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
 class UserController extends Controller 
 {
+    public function __construct(
+        private readonly UserService $userService
+    ) {}
+
     #[OA\Get(
-        path: '/user/{id}',
+        path: '/user',
         summary: "Данные пользователя",
         tags: ["User"],
         security: [
@@ -31,8 +36,13 @@ class UserController extends Controller
             ),
         ]
     )]
-    public function show(Request $request) {
-        $user = $request->user();
-        return new UserResource($user);
+    public function show(Request $request) 
+    {
+        $user = $this->userService->get(
+            $request->user(),
+        );
+        return [
+            'user' => new UserResource($user),
+        ];
     }
 }
