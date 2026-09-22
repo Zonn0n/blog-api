@@ -2,23 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Enums\SortingType;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\Posts\PostListRequest;
+use App\Http\Requests\Posts\StorePostRequest;
 use App\Http\Resources\PostResource;
-use App\Models\Post;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Services\PostService;
 use OpenApi\Attributes as OA;
 
 class PostController extends Controller
-{
-    private const DEFAULT_LIMIT = 20;
-    private const MAX_LIMIT = 100;
-
-    private const DEFAULT_OFFSET = 0;
+{    public function __construct(
+        private readonly PostService $postService
+    ) {}
 
     #[OA\Get(
         path: "/posts",
@@ -35,12 +29,12 @@ class PostController extends Controller
             ),
         ]
     )]
-    public function index(Request $request) 
+    public function index(PostListRequest $request) 
     {
-        return $this->getPostsCollection(
-            Post::query(),
-            $request,
-        );
+        $posts = $this->postService->list($request->toDto());
+        return [
+            'posts' => PostResource::collection($posts)
+        ];
     }
 
     #[OA\Get(
@@ -61,12 +55,17 @@ class PostController extends Controller
             ),
         ]
     )]
-    public function myPosts(Request $request) 
+    public function myPosts(PostListRequest $request) 
     {
-        return $this->getPostsCollection(
-            $request->user()->posts(),
-            $request,
+
+        $posts = $this->postService->listForUser(
+            $request->user(), 
+            $request->toDto(),
         );
+
+        return [
+            'posts' => PostResource::collection($posts)
+        ];
     }
 
     #[OA\Get(
@@ -94,7 +93,11 @@ class PostController extends Controller
     )]
     public function show(int $id) 
     {
-        return new PostResource(Post::findOrFail($id));
+        $post = $this->postService->get($id);
+
+        return [
+            'post' => PostResource::make($post),
+        ];
     }
 
     #[OA\Post(
@@ -142,49 +145,13 @@ class PostController extends Controller
     )]
     public function store(StorePostRequest $request)
     {
-        $post = $request->user()->posts()->create(
-            $request->validated()
+        $post = $this->postService->create(
+            $request->user(), 
+            $request->toDto(),
         );
 
-        return new PostResource($post);
-    }
-
-    private function getPostsCollection(
-        Builder|HasMany $query, 
-        Request $request
-    ): AnonymousResourceCollection
-    {
-        $limit = min(
-            $request->integer('limit', self::DEFAULT_LIMIT), 
-            self::MAX_LIMIT
-        );
-        $offset = $request->integer('offset', self::DEFAULT_OFFSET);
-        $sort = SortingType::tryFrom(
-            $request->query('sort', SortingType::default()->value)
-        ) ?? SortingType::default();
-
-        if ($request->filled('date_from')) {
-            $query->whereDate(
-                'created_at',
-                '>=',
-                $request->date('date_from'),
-            );
-        }
-
-        if ($request->filled('date_to')) {
-            $query->whereDate(
-                'created_at',
-                '<=',
-                $request->date('date_to'),
-            );
-        }
-
-        return PostResource::collection(
-            $query
-                ->orderBy($sort->value)
-                ->offset($offset)
-                ->limit($limit)
-                ->get()
-        );
+        return [
+            'post' => PostResource::make($post),
+        ];
     }
 }
