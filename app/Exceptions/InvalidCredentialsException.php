@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Http\JsonResponse;
 
 final class InvalidCredentialsException extends Exception
 {
@@ -11,7 +12,7 @@ final class InvalidCredentialsException extends Exception
         parent::__construct('Invalid credentials', 401);
     }
 
-    public function render() 
+    public function render(): JsonResponse
     {
         return response()->json([
             'message' => $this->getMessage(),

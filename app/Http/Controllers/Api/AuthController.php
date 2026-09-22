@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Resources\AuthorizedResource;
 use App\Services\AuthService;
 use OpenApi\Attributes as OA;
 
@@ -47,7 +48,11 @@ class AuthController extends Controller
             ),
         ],
     )]
-    public function login(LoginRequest $request) {
-        return $this->authService->login($request->validated());
+    public function login(LoginRequest $request): AuthorizedResource
+    {
+        $authorizedDto = $this->authService->login(
+            $request->toDto(),
+        );
+        return AuthorizedResource::make($authorizedDto);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Http\Dto\Auth\EmailPasswordLoginDto;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -23,8 +24,24 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'],
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+            ],
+            'password' => [
+                'required',
+                'string',
+                'max:255',
+            ],
         ];
+    }
+
+    public function toDto(): EmailPasswordLoginDto
+    {
+        return new EmailPasswordLoginDto(
+            email: $this->string('email')->toString(),
+            password: $this->string('password')->toString(),
+        );
     }
 }

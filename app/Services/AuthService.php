@@ -3,27 +3,31 @@
 namespace App\Services;
 
 use App\Exceptions\InvalidCredentialsException;
+use App\Http\Dto\Auth\AuthorizedDto;
+use App\Http\Dto\Auth\EmailPasswordLoginDto;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-class AuthService 
+final class AuthService 
 {
     /**
      * @throws InvalidCredentialsException
      */
-    public function login(array $data): array
+    public function login(EmailPasswordLoginDto $data): AuthorizedDto
     {
-        $user = User::where('email', $data['email'])->first();
+        $user = User::where('email', $data->email)->first();
         if ($user === null) {
             throw new InvalidCredentialsException();
         }
 
-        if (!Hash::check($data['password'], $user->password)) {
+        if (!Hash::check($data->password, $user->password)) {
             throw new InvalidCredentialsException();
         }
+
+        $token = $user->createToken('mobile');
         
-        return [
-            'access_token' => $user->createToken('mobile')->plainTextToken,
-        ];
+        return new AuthorizedDto(
+            accessToken: $token,
+        );
     }
 }
