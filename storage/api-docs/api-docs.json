@@ -10,64 +10,6 @@
         }
     ],
     "paths": {
-        "/register": {
-            "post": {
-                "tags": [
-                    "Registration"
-                ],
-                "summary": "Регистрация пользователя",
-                "operationId": "5d4fa5d5607ed675ba93907e1fc94534",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "email",
-                                    "password"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Акакий"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "example": "email@mail.ru"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "example": "123456"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Пользователь зарегистрирован",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "access_token": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Ошибка валидации"
-                    }
-                }
-            }
-        },
         "/login": {
             "post": {
                 "tags": [
@@ -260,13 +202,71 @@
                 }
             }
         },
-        "/user/{id}": {
+        "/register": {
+            "post": {
+                "tags": [
+                    "Registration"
+                ],
+                "summary": "Регистрация пользователя",
+                "operationId": "1a591dc3fc4e2f552e3942f97413c163",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Акакий"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "email@mail.ru"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Пользователь зарегистрирован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            }
+        },
+        "/user": {
             "get": {
                 "tags": [
                     "User"
                 ],
                 "summary": "Данные пользователя",
-                "operationId": "4cb26f403ff6b16406b58e88460726c7",
+                "operationId": "f2a190df786c490b752271d58b074c9a",
                 "responses": {
                     "200": {
                         "description": "Ответ",
@@ -342,16 +342,16 @@
     },
     "tags": [
         {
-            "name": "Registration",
-            "description": "Registration"
-        },
-        {
             "name": "Login",
             "description": "Login"
         },
         {
             "name": "Posts",
             "description": "Posts"
+        },
+        {
+            "name": "Registration",
+            "description": "Registration"
         },
         {
             "name": "User",
