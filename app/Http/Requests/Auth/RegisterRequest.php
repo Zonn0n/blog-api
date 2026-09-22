@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Http\Dto\Auth\RegisterUserDto;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -23,9 +24,32 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string'],
+            'name' => [
+                'required', 
+                'string', 
+                'max:255'
+            ],
+            'email' => [
+                'required', 
+                'email', 
+                'max:255',
+                'unique:users,email'
+            ],
+            'password' => [
+                'required', 
+                'string',
+                'min:6',
+                'max:255',
+            ],
         ];
+    }
+
+    public function toDto(): RegisterUserDto
+    {
+        return new RegisterUserDto(
+            name: $this->string('name')->toString(),
+            email: $this->string('email')->toString(),
+            password: $this->string('password')->toString(),
+        );
     }
 }

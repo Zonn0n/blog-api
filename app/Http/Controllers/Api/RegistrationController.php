@@ -3,25 +3,30 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use App\Services\AuthService;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Services\RegisterService;
 use OpenApi\Attributes as OA;
 
-class AuthController extends Controller
+class RegistrationController extends Controller
 {
     public function __construct(
-        private readonly AuthService $authService,
+        private readonly RegisterService $registerService
     ) {}
 
     #[OA\Post(
-        path: "/login",
-        summary: "Логин",
-        tags: ["Login"],
+        path: "/register",
+        summary: "Регистрация пользователя",
+        tags: ["Registration"],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ["email", "password"],
+                required: ["name", "email", "password"],
                 properties: [
+                    new OA\Property(
+                        property: 'name',
+                        type: 'string',
+                        example: 'Акакий',
+                    ),
                     new OA\Property(
                         property: 'email',
                         type: 'string',
@@ -47,7 +52,10 @@ class AuthController extends Controller
             ),
         ],
     )]
-    public function login(LoginRequest $request) {
-        return $this->authService->login($request->validated());
+    public function register(RegisterRequest $request) 
+    {    
+        return $this->registerService->register(
+            $request->toDto()
+        );
     }
 }
